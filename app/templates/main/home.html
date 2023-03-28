@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gresock Apps</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main_style.css') }}">
+</head>
+<body>
+    <a href="/">Home</a>
+    <div class="container">
+      <a href="{{ url_for('banker.home') }}">
+        <div class="box">
+          <img src="{{ url_for('static', filename='piggy-bank.svg') }}">
+        </div>
+      </a>
+    </div>
+</body>
+</html>
