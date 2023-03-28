@@ -2,6 +2,7 @@ import csv
 
 from flask import request, render_template, redirect, url_for, flash
 from sqlalchemy import create_engine, Table, Column, Integer, String, Date, MetaData, text
+from io import StringIO 
 import pandas as pd
 
 from . import banker
@@ -27,12 +28,12 @@ def home():
 def upload():
     if request.method == 'POST':
         # Get the uploaded file and save it to disk
-        file = request.files['file']
-        file.save(file.filename)
+        filedata = request.files['file'].read()
+        string_data = filedata.decode('utf-8')
         
         # Load the CSV data into a list of dictionaries
         try:
-            data = pd.read_csv(file.filename)
+            data = pd.read_csv(StringIO(string_data))
             data = data.applymap(lambda x: x.lower() if isinstance(x, str) else x)
             data.columns = data.columns.str.lower()
             data.to_sql('testbankdata', engine, if_exists='append', index=False)
