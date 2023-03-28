@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banker App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='banker_style.css') }}">
+</head>
+<body>
+    <a href="/">App Home</a>
+    <a href="/banker">Banker Home</a>
+    <a href="/banker/upload">Upload</a>
+    <a href="/banker/view">View</a>
+    <div class="welcome_center">Welcome to Banker v1.0</div>
+    <div id="success-message"></div>
+    <script>
+        // check if the URL has a success parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSuccess = urlParams.get('success');
+        const successMessage = document.getElementById('success-message');
+
+        // if the parameter is present, display the success message
+        if (isSuccess) {
+            successMessage.innerHTML = 'File upload successful!';
+            successMessage.classList.add('show');
+            successMessage.classList.add('fade-in');
+
+            // fade out the message after 3 seconds
+            setTimeout(() => {
+                successMessage.classList.remove('fade-in');
+                successMessage.classList.add('fade-out');
+            }, 3000);
+        }
+        else {
+            successMessage.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
