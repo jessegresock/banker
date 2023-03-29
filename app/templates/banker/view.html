@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <link rel="stylesheet" href="{{url_for('static', filename='banker_style.css')}}">
   <head>
     <title>Banker</title>
   </head>
@@ -8,7 +9,52 @@
     <a href="/banker">Banker Home</a>
     <a href="/banker/upload">Upload</a>
     <a href="/banker/view">View</a>
-    <h1>Data Table</h1>
-    {{ data|safe }}
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>status</th>
+          <th>date</th>
+          <th>description</th>
+          <th>debit</th>
+          <th>credit</th>
+          <th>created_at</th>
+          <th>category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr>
+            <td>{{ row.id }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('banker.update_row', id=row.id) }}">
+                {{ row.status }}
+            </td>
+            <td>
+              {{ row.date }}
+            </td>
+            <td>
+              {{ row.description }}
+            </td>
+            <td>
+              {{ row.debit }}
+            </td>
+            <td>
+              {{ row.credit }}
+            </td>
+            <td>
+              {{ row.created_at }}
+            </td>
+            <td>
+              <input type="text" name="category" value="{{ row.category }}">
+            </td>
+            <td>
+                <button type="submit">Update</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </body>
 </html>

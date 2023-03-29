@@ -1,11 +1,89 @@
-.welcome_center {
+.welcome-center {
     position: absolute;
     top: 10%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 36px;
     font-weight: bold;
+    font-family: Verdana, sans-serif;
     color: #333;
+}
+
+.today-center {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-family: Verdana, sans-serif;
+    color: #333;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+.monthly-center {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-family: Verdana, sans-serif;
+    color: #333;
+}
+
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  display: inline-block;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 50px;
+  width: 50px;
+  height: 150px;
+  line-height: 1.5em;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.box img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.box .text{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-family: Verdana, sans-serif;
+}
+
+img {
+  width: 150px;
+  height: 150px;
+}
+
+a {
+    font-family: Verdana, sans-serif;
 }
 
 #success-message {
