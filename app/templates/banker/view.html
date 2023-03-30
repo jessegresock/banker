@@ -13,12 +13,10 @@
       <thead>
         <tr>
           <th>id</th>
-          <th>status</th>
           <th>date</th>
           <th>description</th>
           <th>debit</th>
           <th>credit</th>
-          <th>created_at</th>
           <th>category</th>
         </tr>
       </thead>
@@ -28,9 +26,6 @@
             <td>{{ row.id }}</td>
             <td>
               <form method="POST" action="{{ url_for('banker.update_row', id=row.id) }}">
-                {{ row.status }}
-            </td>
-            <td>
               {{ row.date }}
             </td>
             <td>
@@ -41,9 +36,6 @@
             </td>
             <td>
               {{ row.credit }}
-            </td>
-            <td>
-              {{ row.created_at }}
             </td>
             <td>
               <input type="text" name="category" value="{{ row.category }}">

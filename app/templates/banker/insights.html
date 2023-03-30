@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Basic Grid</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='banker_style.css') }}">
+  </head>
+  <body>   
+    <a href="/banker">Banker Home</a>
+    <a href="/banker/upload">Upload</a>
+    <a href="/banker/view">View</a>
+    <a href="/banker/insights">Insights</a>
+    <h1>Insights</h1>
+    <form method="POST" action="/banker/insights">
+      <label for="dropdown">Select an option:</label>
+      <select id="dropdown" name="dropdown">
+        <option value="2023-03-12">2023-03-12</option>
+        <option value="2023-03-05">2023-03-05</option>
+        <option value="2023-02-26">2023-02-26</option>
+      </select>
+      <input type="submit" value="Submit">
+    </form>
+    <h1>Week Start: {{ week_start }}</h1>
+    <section class="basic-grid">
+        <div class="card"><h1>Gas</h1><p>{{ gas_data }}</p></div>
+        <div class="card"><h1>Grocery</h1><p>{{ grocery_data }}</p></div>
+        <div class="card"><h1>Entertainment</h1><p>{{ entertainment_data }}</p></div>
+        <div class="card"><h1>House</h1><p>{{ other_data }}</p></div>
+    </section>
+
+  </body>
+</html>

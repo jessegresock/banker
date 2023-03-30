@@ -9,6 +9,7 @@
     <a href="/banker">Banker Home</a>
     <a href="/banker/upload">Upload</a>
     <a href="/banker/view">View</a>
+    <a href="/banker/insights">Insights</a>
     <div class="welcome-center">Welcome to Banker v1.1</div>
     <div class="today-center">Today: {{ today }}</div>
     <div class="monthly-center">Report For Month End: {{ month_end }}</div>
@@ -61,7 +62,7 @@
         <div class="box">
             <img src="{{ url_for('static', filename='shield-question.svg') }}">
             <div class="text">
-                <h3>Other</h3>
+                <h3>Misc.</h3>
                 <p>{{ other_data }}</p>
             </div>
         </div>
