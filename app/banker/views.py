@@ -12,6 +12,7 @@ from .. import app
 from ..extensions import db
 from ..models import CitiTransactionData
 from . import categorizer
+from . import webobjs
 
 
 ## Configure the database connection
@@ -28,23 +29,19 @@ def home():
     postgres_df = pd.read_sql_query(sql=text("SELECT * FROM citi_transaction_data"), con=engine.connect())
     postgres_df = postgres_df[(postgres_df['date'] >= last_month_start) & (postgres_df['date'] <= last_month_end)]
 
-    # place into dataframes for processing
-    gas_df = postgres_df[postgres_df['category'] == 'gas']
-    grocery_df = postgres_df[postgres_df['category'] == 'grocery']
-    entertainment_df = postgres_df[postgres_df['category'] == 'entertainment']
-    other_df = postgres_df[~postgres_df['category'].isin(['gas', 'grocery', 'entertainment'])]
-
-    # agg across each dataframe
-    agg_gas_df = gas_df.groupby('category').agg({'debit': 'sum'})
-    agg_grocery_df = grocery_df.groupby('category').agg({'debit': 'sum'})
-    agg_entertainment_df = entertainment_df.groupby('category').agg({'debit': 'sum'})
-    agg_other_df = other_df.groupby('category').agg({'debit': 'sum'})
-
     # get aggregate value, if empty return 0
-    gas_agg = agg_gas_df.values.tolist()[0][0] if not agg_gas_df.empty else 0
-    grocery_agg = agg_grocery_df.values.tolist()[0][0] if not agg_grocery_df.empty else 0
-    entertainment_agg = agg_entertainment_df.values.tolist()[0][0] if not agg_entertainment_df.empty else 0
-    other_agg = agg_other_df.values.tolist()[0][0] if not agg_other_df.empty else 0
+    gas_agg = get_category_agg('gas', postgres_df)
+    grocery_agg = get_category_agg('grocery', postgres_df)
+    entertainment_agg = get_category_agg('entertainment', postgres_df)
+    other_agg = get_category_agg('house', postgres_df)
+
+    # TODO: THIS NEEDS TO BE FIXED
+    tiles = [
+        webobjs.DataTile('$' + str(round(gas_agg, 2)), 'Gas'),
+        webobjs.DataTile('$' + str(round(grocery_agg, 2)), 'Grocery'),
+        webobjs.DataTile('$' + str(round(entertainment_agg, 2)), 'Entertainment'),
+        webobjs.DataTile('$' + str(round(other_agg, 2)), 'House'),
+    ]
 
     render_context = {
         'gas_data': '$'+ str(round(gas_agg, 2)),
@@ -55,7 +52,7 @@ def home():
         'month_end':last_month_end,
     }
 
-    return render_template('banker/home.html', **render_context) 
+    return render_template('banker/home.html', today=today, month_end=last_month_end, tiles=tiles) 
 
 
 @banker.route('/upload', methods=['GET', 'POST'])
@@ -118,23 +115,11 @@ def insights():
         postgres_df = pd.read_sql_query(sql=text("SELECT * FROM citi_transaction_data"), con=engine.connect())
         postgres_df = postgres_df[(postgres_df['date'] >= week_start) & (postgres_df['date'] <= week_end)]
 
-        # place into dataframes for processing
-        gas_df = postgres_df[postgres_df['category'] == 'gas']
-        grocery_df = postgres_df[postgres_df['category'] == 'grocery']
-        entertainment_df = postgres_df[postgres_df['category'] == 'entertainment']
-        other_df = postgres_df[~postgres_df['category'].isin(['gas', 'grocery', 'entertainment'])]
-
-        # agg across each dataframe
-        agg_gas_df = gas_df.groupby('category').agg({'debit': 'sum'})
-        agg_grocery_df = grocery_df.groupby('category').agg({'debit': 'sum'})
-        agg_entertainment_df = entertainment_df.groupby('category').agg({'debit': 'sum'})
-        agg_other_df = other_df.groupby('category').agg({'debit': 'sum'})
-
         # get aggregate value, if empty return 0
-        gas_agg = agg_gas_df.values.tolist()[0][0] if not agg_gas_df.empty else 0
-        grocery_agg = agg_grocery_df.values.tolist()[0][0] if not agg_grocery_df.empty else 0
-        entertainment_agg = agg_entertainment_df.values.tolist()[0][0] if not agg_entertainment_df.empty else 0
-        other_agg = agg_other_df.values.tolist()[0][0] if not agg_other_df.empty else 0
+        gas_agg = get_category_agg('gas', postgres_df)
+        grocery_agg = get_category_agg('grocery', postgres_df)
+        entertainment_agg = get_category_agg('entertainment', postgres_df)
+        other_agg = get_category_agg('house', postgres_df)
 
         render_context = {
             'gas_data': '$'+ str(round(gas_agg, 2)),
@@ -144,7 +129,14 @@ def insights():
             'week_start': week_start
         }
 
-        return render_template('banker/insights.html', **render_context)
+        tiles = [
+            webobjs.DataTile('$' + str(round(gas_agg, 2)), 'Gas'),
+            webobjs.DataTile('$' + str(round(grocery_agg, 2)), 'Grocery'),
+            webobjs.DataTile('$' + str(round(entertainment_agg, 2)), 'Entertainment'),
+            webobjs.DataTile('$' + str(round(other_agg, 2)), 'House'),
+        ]
+
+        return render_template('banker/insights.html', week_start=week_start, tiles=tiles)
 
     else:
         today = date.today()
@@ -155,31 +147,29 @@ def insights():
         postgres_df = pd.read_sql_query(sql=text("SELECT * FROM citi_transaction_data"), con=engine.connect())
         postgres_df = postgres_df[(postgres_df['date'] >= last_week_start) & (postgres_df['date'] <= last_week_end)]
 
-        # place into dataframes for processing
-        gas_df = postgres_df[postgres_df['category'] == 'gas']
-        grocery_df = postgres_df[postgres_df['category'] == 'grocery']
-        entertainment_df = postgres_df[postgres_df['category'] == 'entertainment']
-        other_df = postgres_df[~postgres_df['category'].isin(['gas', 'grocery', 'entertainment'])]
-
-        # agg across each dataframe
-        agg_gas_df = gas_df.groupby('category').agg({'debit': 'sum'})
-        agg_grocery_df = grocery_df.groupby('category').agg({'debit': 'sum'})
-        agg_entertainment_df = entertainment_df.groupby('category').agg({'debit': 'sum'})
-        agg_other_df = other_df.groupby('category').agg({'debit': 'sum'})
-
         # get aggregate value, if empty return 0
-        gas_agg = agg_gas_df.values.tolist()[0][0] if not agg_gas_df.empty else 0
-        grocery_agg = agg_grocery_df.values.tolist()[0][0] if not agg_grocery_df.empty else 0
-        entertainment_agg = agg_entertainment_df.values.tolist()[0][0] if not agg_entertainment_df.empty else 0
-        other_agg = agg_other_df.values.tolist()[0][0] if not agg_other_df.empty else 0
+        gas_agg = get_category_agg('gas', postgres_df)
+        grocery_agg = get_category_agg('grocery', postgres_df)
+        entertainment_agg = get_category_agg('entertainment', postgres_df)
+        other_agg = get_category_agg('house', postgres_df)
 
-        render_context = {
-            'gas_data': '$'+ str(round(gas_agg, 2)),
-            'grocery_data': '$' + str(round(grocery_agg, 2)),
-            'entertainment_data': '$'+ str(round(entertainment_agg, 2)),
-            'other_data': '$'+ str(round(other_agg, 2)),
-            'week_start': last_week_start
-        }
+        tiles = [
+            webobjs.DataTile('$' + str(round(gas_agg, 2)), 'Gas'),
+            webobjs.DataTile('$' + str(round(grocery_agg, 2)), 'Grocery'),
+            webobjs.DataTile('$' + str(round(entertainment_agg, 2)), 'Entertainment'),
+            webobjs.DataTile('$' + str(round(other_agg, 2)), 'House'),
+        ]
 
+        return render_template('banker/insights.html', week_start=last_week_start, tiles=tiles)
 
-        return render_template('banker/insights.html', **render_context)
+    
+def get_category_agg(category, _data, negative=False):
+    category = [category] if type(category) is not list else category
+    if not negative:
+        cat_df = _data[_data['category'].isin(category)]
+    else:
+        cat_df = _data[~_data['category'].isin(category)]
+        
+    cat_agg_df = cat_df.groupby('category').agg({'debit': 'sum'})
+
+    return cat_agg_df.values.tolist()[0][0] if not cat_agg_df.empty else 0

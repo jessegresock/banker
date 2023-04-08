@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Basic Grid</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='banker_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='banker_insights_style.css') }}">
   </head>
   <body>   
     <a href="/banker">Banker Home</a>
@@ -23,11 +23,13 @@
     </form>
     <h1>Week Start: {{ week_start }}</h1>
     <section class="basic-grid">
-        <div class="card"><h1>Gas</h1><p>{{ gas_data }}</p></div>
+      {% for tile in tiles %}
+        {{ tile.html|safe }}
+      {% endfor %}
+        <!--<div class="card"><h1>Gas</h1><p>{{ gas_data }}</p></div>
         <div class="card"><h1>Grocery</h1><p>{{ grocery_data }}</p></div>
         <div class="card"><h1>Entertainment</h1><p>{{ entertainment_data }}</p></div>
-        <div class="card"><h1>House</h1><p>{{ other_data }}</p></div>
+        <div class="card"><h1>House</h1><p>{{ other_data }}</p></div>-->
     </section>
-
   </body>
 </html>
